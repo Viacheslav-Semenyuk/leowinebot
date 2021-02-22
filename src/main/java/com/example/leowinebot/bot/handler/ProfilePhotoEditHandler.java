@@ -39,16 +39,16 @@ public class ProfilePhotoEditHandler {
                 userService.save(user);
                 break;
             case ("7"):
-                if (message.getText().equals("Оставить текущее")) {
-                    user.setPhoto(user.getPhoto());
+                if (message.hasPhoto() && !message.hasText() && !message.hasAudio()) {
                     user.setActive(true);
+                    user.setPhoto(message.getPhoto().get(0).getFileId());
                     user.setStates("2");
                     user.setProfileEditStates("0");
                     userService.save(user);
                     profileHandler.handle(message, user, chatId);
-                } else if (message.hasPhoto() && !message.hasText() && !message.hasAudio()) {
+                } else if (message.getText().equals("Оставить текущее")) {
                     user.setActive(true);
-                    user.setPhoto(message.getPhoto().get(0).getFileId());
+                    user.setPhoto(user.getPhoto());
                     user.setStates("2");
                     user.setProfileEditStates("0");
                     userService.save(user);

@@ -42,7 +42,7 @@ public class Bot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = Long.toString(message.getChatId());
             User user = userService.findByChatId(chatId);
-            log.info("Message from user: " + chatId + " " + message.getFrom().getUserName() + " Text: " + message.getText());
+            log.info("Message from user: " + chatId + " username: " + message.getFrom().getUserName() + " Text: " + message.getText());
 
             if (user != null && message.hasText()
                     && !message.hasPhoto() && !user.getBanned()) {
