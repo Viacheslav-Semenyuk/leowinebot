@@ -100,6 +100,7 @@ public class ProfileHandler {
                     default:
                         bot.executeMessage(new SendMessage()
                                 .setChatId(chatId)
+                                .setReplyMarkup(keyboardHandler.handle(keyboardHandler.profileKeyboard()))
                                 .setText("Нету такого варианта ответа."));
                 }
                 break;
