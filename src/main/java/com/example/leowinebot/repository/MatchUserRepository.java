@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Transactional
 public interface MatchUserRepository extends JpaRepository<MatchUser, Long> {
 
     List<MatchUser> findAllByChatId(String chatId);
