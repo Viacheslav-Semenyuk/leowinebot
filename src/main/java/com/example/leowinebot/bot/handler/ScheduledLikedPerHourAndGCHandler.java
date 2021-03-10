@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
-public class ScheduledLikedPerHourToZeroHandler {
+public class ScheduledLikedPerHourAndGCHandler {
 
     @Autowired
     private UserService userService;
@@ -20,7 +20,10 @@ public class ScheduledLikedPerHourToZeroHandler {
 
     @Scheduled(fixedRate = 3600000)
     public void changeCountCurrentTime() {
+
         userService.saveAllLikedPerHour();
-        log.info("Save liked per hour to zero {}", dateFormat.format(new Date()));
+        System.gc();
+
+        log.info("Save liked per hour to zero and garbage collector executed {}", dateFormat.format(new Date()));
     }
 }
