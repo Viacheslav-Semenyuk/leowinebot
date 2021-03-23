@@ -5,7 +5,6 @@ import com.example.leowinebot.entity.MatchUser;
 import com.example.leowinebot.entity.User;
 import com.example.leowinebot.service.MatchUserService;
 import com.example.leowinebot.service.UserService;
-import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @Component
-public class MatchHandler {
+public class MatchHandler implements Handler {
 
     @Autowired
     private Bot bot;
@@ -31,7 +29,7 @@ public class MatchHandler {
     @Autowired
     private KeyboardHandler keyboardHandler;
 
-    public Message handle(Message message, User user, String chatId) {
+    public void handle(Message message, User user, String chatId) {
 
         if (matchUserService.existsByLikeChatId(chatId)) {
             MatchUser matchUser = matchUserService.findByLikeChatId(chatId);
@@ -40,92 +38,81 @@ public class MatchHandler {
                 matchUserService.deleteAllByChatId(matchUser.getChatId());
             }
             assert foundUser != null;
-            log.info("FROM MATCH USER {} to USER {}", user.getChatId(), foundUser.getChatId());
-            switch (user.getMatchStates()) {
-                case ("0"):
-                    if (message.getText().equals("1")) {
+            if (user.getMatchStates().equals("0")) {
+                if (message.getText().equals("1")) {
 
-                        sendMessageLike(chatId, foundUser, matchUser);
+                    sendMessageLike(chatId, foundUser, matchUser);
 
-                        user.setActive(true);
-                        user.setStates("7");
-                        user.setMatchStates("1");
-                        userService.save(user);
-                        break;
+                    user.setActive(true);
+                    user.setStates("match");
+                    user.setMatchStates("1");
+                    userService.save(user);
 
-                    } else if (message.getText().equals("2")) {
-                        bot.executeMessage(new SendMessage()
-                                .setChatId(chatId)
-                                .setReplyMarkup(keyboardHandler.handle(keyboardHandler.twoKeyboard()))
-                                .setText("Так ты не узнаешь, что кому-то нравишься... Точно хочешь отключить свою анкету?\n" +
-                                        "\n" +
-                                        "1. Да, отключить анкету.\n" +
-                                        "2. Нет, вернуться назад."));
-                        user.setStates("9");
-                        userService.save(user);
-                        break;
-                    } else {
-                        bot.executeMessage(new SendMessage()
-                                .setChatId(chatId)
-                                .setText("Нет такого варианта ответа"));
-                    }
+                } else if (message.getText().equals("2")) {
+                    bot.executeMessage(new SendMessage()
+                            .setChatId(chatId)
+                            .setReplyMarkup(keyboardHandler.handle(keyboardHandler.twoKeyboard()))
+                            .setText("Так ты не узнаешь, что кому-то нравишься... Точно хочешь отключить свою анкету?\n" +
+                                    "\n" +
+                                    "1. Да, отключить анкету.\n" +
+                                    "2. Нет, вернуться назад."));
+                    user.setStates("active");
+                    userService.save(user);
 
-                case ("1"):
-                    Emoji emoji = EmojiManager.getByUnicode(message.getText());
-                    if (emoji != null) {
-                        switch (emoji.getAliases().get(0)) {
-                            case ("heart"):
-                                bot.executeMessage(new SendMessage()
-                                        .setChatId(chatId)
-                                        .setText("Отлично! Надесюь хорошо проведете время ;) добавляй в друзья "
-                                                + "[" + foundUser.getName() + "](tg://user?id=" + foundUser.getChatId() + ")")
-                                        .enableMarkdown(true));
-
-                                bot.executeMessage(new SendMessage()
-                                        .setChatId(foundUser.getChatId())
-                                        .setText("Есть взаимная симпатия! Добавляй в друзья "
-                                                + "[" + user.getName() + "](tg://user?id=" + user.getChatId() + ")")
-                                        .enableMarkdown(true));
-                                bot.executePhoto(new SendPhoto().setChatId(foundUser.getChatId())
-                                        .setCaption(user.getName() + ", " + user.getAge() + ", "
-                                                + user.getCity()  + " " + user.getAbout()).setPhoto(user.getPhoto()));
-                                bot.executeMessage(new SendMessage()
-                                        .setChatId(foundUser.getChatId())
-                                        .setReplyMarkup(keyboardHandler.handle(keyboardHandler.threeKeyboard()))
-                                        .setText("1. Смотреть анкеты.\n" +
-                                                "2. Моя анкета.\n" +
-                                                "3. Я больше не хочу никого искать."));
-
-                                delete(chatId, user, foundUser);
-                                foundUser.setStates("8");
-                                foundUser.setMatchStates("0");
-                                foundUser.setSearchStates("0");
-                                userService.save(foundUser);
-                                break;
-
-                            case ("-1"):
-                                delete(chatId, user, foundUser);
-                                break;
-
-                            default:
-                                bot.executeMessage(new SendMessage()
-                                        .setChatId(chatId)
-                                        .setText("Нет такого варианта ответа"));
-                                break;
-                        }
-                    } else {
-                        bot.executeMessage(new SendMessage()
-                                .setChatId(chatId)
-                                .setReplyMarkup(keyboardHandler.handle(keyboardHandler.matchKeyboard()))
-                                .setText("Воспользуйся кнопками."));
-
-                    }
-                    break;
-                default:
+                } else {
                     bot.executeMessage(new SendMessage()
                             .setChatId(chatId)
                             .setText("Нет такого варианта ответа"));
-                    break;
+                }
+            } else if (user.getMatchStates().equals("1")) {
+
+                if (EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("heart")
+                        && EmojiManager.getByUnicode(message.getText()) != null
+                        || message.getText().equals("1")) {
+                    bot.executeMessage(new SendMessage()
+                            .setChatId(chatId)
+                            .setText("Отлично! Надесюь хорошо проведете время ;) добавляй в друзья "
+                                    + "[" + foundUser.getName() + "](tg://user?id=" + foundUser.getChatId() + ")")
+                            .enableMarkdown(true));
+
+                    bot.executeMessage(new SendMessage()
+                            .setChatId(foundUser.getChatId())
+                            .setText("Есть взаимная симпатия! Добавляй в друзья "
+                                    + "[" + user.getName() + "](tg://user?id=" + user.getChatId() + ")")
+                            .enableMarkdown(true));
+                    bot.executePhoto(new SendPhoto().setChatId(foundUser.getChatId())
+                            .setCaption(user.getName() + ", " + user.getAge() + ", "
+                                    + user.getCity() + " " + user.getAbout()).setPhoto(user.getPhoto()));
+                    bot.executeMessage(new SendMessage()
+                            .setChatId(foundUser.getChatId())
+                            .setReplyMarkup(keyboardHandler.handle(keyboardHandler.threeKeyboard()))
+                            .setText("1. Смотреть анкеты.\n" +
+                                    "2. Моя анкета.\n" +
+                                    "3. Я больше не хочу никого искать."));
+
+                    deleteMatch(chatId, user, foundUser);
+                    foundUser.setStates("afterMatch");
+                    foundUser.setMatchStates("0");
+                    foundUser.setSearchStates("0");
+                    userService.save(foundUser);
+
+                } else if (EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("-1")
+                        && EmojiManager.getByUnicode(message.getText()) != null
+                        || message.getText().equals("2")) {
+
+                    deleteMatch(chatId, user, foundUser);
+
+                } else {
+                    bot.executeMessage(new SendMessage()
+                            .setChatId(chatId)
+                            .setReplyMarkup(keyboardHandler.handle(keyboardHandler.matchKeyboard()))
+                            .setText("Воспользуйся кнопками."));
+
+                }
+            } else {
+                bot.executeMessage(new SendMessage()
+                        .setChatId(chatId)
+                        .setText("Нет такого варианта ответа"));
             }
         } else {
             bot.executeMessage(new SendMessage()
@@ -134,21 +121,20 @@ public class MatchHandler {
                     .setText("1. Смотреть анкеты.\n" +
                             "2. Моя анкета.\n" +
                             "3. Я больше не хочу никого искать."));
-            user.setStates("8");
+            user.setStates("afterMatch");
             user.setMatchStates("0");
             user.setSearchStates("0");
             userService.save(user);
         }
-        return message;
     }
 
-    private void delete(String chatId, User user, User foundUser) {
+    private void deleteMatch(String chatId, User user, User foundUser) {
         matchUserService.deleteByChatIdAndLikeChatId(foundUser.getChatId(), chatId);
         if (matchUserService.countByLikeChatId(chatId) != 0) {
             MatchUser newMatchUser = matchUserService.findByLikeChatId(chatId);
             User newFoundUser = userService.findByChatId(newMatchUser.getChatId());
             sendMessageLike(chatId, newFoundUser, newMatchUser);
-            user.setStates("7");
+            user.setStates("match");
             user.setMatchStates("1");
             user.setSearchStates("0");
             userService.save(user);
@@ -159,7 +145,7 @@ public class MatchHandler {
                     .setText("1. Смотреть анкеты.\n" +
                             "2. Моя анкета.\n" +
                             "3. Я больше не хочу никого искать."));
-            user.setStates("8");
+            user.setStates("afterMatch");
             user.setMatchStates("0");
             user.setSearchStates("0");
             userService.save(user);
@@ -187,4 +173,8 @@ public class MatchHandler {
         }
     }
 
+    @Override
+    public boolean test(String o) {
+        return "match".equals(o);
+    }
 }

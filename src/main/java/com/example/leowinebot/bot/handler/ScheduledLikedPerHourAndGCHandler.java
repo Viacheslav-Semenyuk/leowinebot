@@ -13,10 +13,9 @@ import java.util.Date;
 @Slf4j
 public class ScheduledLikedPerHourAndGCHandler {
 
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     @Autowired
     private UserService userService;
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Scheduled(fixedRate = 3600000)
     public void changeCountCurrentTime() {

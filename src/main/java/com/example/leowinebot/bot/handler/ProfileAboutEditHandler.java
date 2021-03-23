@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 @Component
-public class ProfileAboutEditHandler {
+public class ProfileAboutEditHandler implements Handler {
 
     @Autowired
     private UserService userService;
@@ -25,34 +23,36 @@ public class ProfileAboutEditHandler {
     @Autowired
     private Bot bot;
 
-    public Message handle(Message message, User user, String chatId) {
+    public void handle(Message message, User user, String chatId) {
 
-        switch (user.getProfileEditStates()) {
-            case ("0"):
-                bot.executeMessage(new SendMessage()
-                        .setChatId(chatId)
-                        .setReplyMarkup(keyboardHandler.handle(keyboardHandler.editKeyboard("Пропустить")))
-                        .setText("Расскажи о себе и кого хочешь найти, \n" +
-                                "чем предлагаешь заняться. \n" +
-                                "Это поможет лучше подобрать тебе компанию."));
-                user.setProfileEditStates("1");
-                userService.save(user);
-                break;
-            case ("1"):
-                if (message.getText().equals("Пропустить")) {
-                    user.setAbout(" ");
-                } else {
-                    user.setAbout("– " + message.getText());
-                }
-                user.setActive(true);
-                user.setStates("2");
-                user.setProfileEditStates("0");
-                userService.save(user);
-                profileHandler.handle(message, user, chatId);
-                break;
+        if (user.getProfileEditStates().equals("0")) {
+            bot.executeMessage(new SendMessage()
+                    .setChatId(chatId)
+                    .setReplyMarkup(keyboardHandler.handle(keyboardHandler.editKeyboard("Пропустить")))
+                    .setText("Расскажи о себе и кого хочешь найти, \n" +
+                            "чем предлагаешь заняться. \n" +
+                            "Это поможет лучше подобрать тебе компанию."));
+            user.setProfileEditStates("1");
+            userService.save(user);
+        } else if (user.getProfileEditStates().equals("1")) {
+
+            if (message.getText().equals("Пропустить")) {
+                user.setAbout(" ");
+            } else {
+                user.setAbout("– " + message.getText());
+            }
+            user.setActive(true);
+            user.setStates("profile");
+            user.setProfileEditStates("0");
+            userService.save(user);
+            profileHandler.handle(message, user, chatId);
+
         }
 
-        return message;
     }
 
+    @Override
+    public boolean test(String o) {
+        return "profileAboutEdit".equals(o);
+    }
 }

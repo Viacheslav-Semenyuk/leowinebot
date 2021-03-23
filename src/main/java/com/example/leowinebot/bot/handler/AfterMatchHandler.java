@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class AfterMatchHandler {
+public class AfterMatchHandler implements Handler {
 
     @Autowired
     private Bot bot;
@@ -27,17 +26,17 @@ public class AfterMatchHandler {
     @Autowired
     private KeyboardHandler keyboardHandler;
 
-    public Message handle(Message message, User user, String chatId) {
+    public void handle(Message message, User user, String chatId) {
 
         switch (message.getText()) {
             case ("1"):
-                user.setStates("1");
+                user.setStates("search");
                 userService.save(user);
                 searchHandler.handle(message, user, chatId);
                 break;
             case ("2"):
                 user.setProfileEditStates("0");
-                user.setStates("2");
+                user.setStates("profile");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);
                 break;
@@ -49,7 +48,7 @@ public class AfterMatchHandler {
                                 "\n" +
                                 "1. Да, отключить анкету.\n" +
                                 "2. Нет, вернуться назад."));
-                user.setStates("9");
+                user.setStates("active");
                 userService.save(user);
                 break;
             default:
@@ -59,6 +58,10 @@ public class AfterMatchHandler {
                 break;
         }
 
-        return message;
+    }
+
+    @Override
+    public boolean test(String o) {
+        return "afterMatch".equals(o);
     }
 }

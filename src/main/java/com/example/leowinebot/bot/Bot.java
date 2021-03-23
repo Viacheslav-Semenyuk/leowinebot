@@ -21,8 +21,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class Bot extends TelegramLongPollingBot {
 
-    private static final String TOKEN = System.getenv("TOKEN");
-    private static final String BOT_USERNAME = System.getenv("BOT_USERNAME");
+//    private static final String TOKEN = System.getenv("TOKEN");
+//    private static final String BOT_USERNAME = System.getenv("BOT_USERNAME");
+
+    @Value(value = "1521529983:AAGEQQKxUHM_GpH-ILo191SvoG9lINSCMBk")
+    private String TOKEN;
+    @Value(value = "just2knowbot")
+    private String BOT_USERNAME;
 
     @Autowired
     private UserService userService;
@@ -43,7 +48,7 @@ public class Bot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = Long.toString(message.getChatId());
             User user = userService.findByChatId(chatId);
-            log.info("Message from user: " + chatId + " username: " + message.getFrom().getUserName() + " Text: " + message.getText());
+            log.info("Chat ID: " + chatId + " username: " + message.getFrom().getUserName() + " Text: " + message.getText());
 
             if (user != null && message.hasText()
                     && !message.hasPhoto() && !user.getBanned()) {
@@ -76,7 +81,7 @@ public class Bot extends TelegramLongPollingBot {
                 createUser.setLikedPerHour(0);
                 createUser.setActive(false);
                 createUser.setBanned(false);
-                createUser.setStates("6");
+                createUser.setStates("start");
                 userService.save(createUser);
             } else {
                 executeMessage(new SendMessage()
