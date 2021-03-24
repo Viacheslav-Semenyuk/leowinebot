@@ -28,34 +28,30 @@ public class AfterMatchHandler implements Handler {
 
     public void handle(Message message, User user, String chatId) {
 
-        switch (message.getText()) {
-            case ("1"):
-                user.setUserStates("search");
-                userService.save(user);
-                searchHandler.handle(message, user, chatId);
-                break;
-            case ("2"):
-                user.setProfileEditStates("0");
-                user.setUserStates("profile");
-                userService.save(user);
-                profileHandler.handle(message, user, chatId);
-                break;
-            case ("3"):
-                bot.executeMessage(new SendMessage()
-                        .setChatId(chatId)
-                        .setReplyMarkup(keyboardHandler.handle(keyboardHandler.twoKeyboard()))
-                        .setText("Так ты не узнаешь, что кому-то нравишься... Точно хочешь отключить свою анкету?\n" +
-                                "\n" +
-                                "1. Да, отключить анкету.\n" +
-                                "2. Нет, вернуться назад."));
-                user.setUserStates("active");
-                userService.save(user);
-                break;
-            default:
-                bot.executeMessage(new SendMessage()
-                        .setChatId(chatId)
-                        .setText("Нет такого варианта ответа"));
-                break;
+        if (message.getText().equals("1")) {
+            user.setUserStates("search");
+            userService.save(user);
+            searchHandler.handle(message, user, chatId);
+        } else if (message.getText().equals("2")) {
+            user.setProfileEditStates("0");
+            user.setUserStates("profile");
+            userService.save(user);
+            profileHandler.handle(message, user, chatId);
+        } else if (message.getText().equals("3")) {
+            bot.executeMessage(new SendMessage()
+                    .setChatId(chatId)
+                    .setReplyMarkup(keyboardHandler.handle(keyboardHandler.twoKeyboard()))
+                    .setText("Так ты не узнаешь, что кому-то нравишься... Точно хочешь отключить свою анкету?\n" +
+                            "\n" +
+                            "1. Да, отключить анкету.\n" +
+                            "2. Нет, вернуться назад."));
+            user.setUserStates("active");
+            userService.save(user);
+        } else {
+            bot.executeMessage(new SendMessage()
+                    .setChatId(chatId)
+                    .setText("Нет такого варианта ответа"));
+
         }
 
     }
