@@ -21,14 +21,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class Bot extends TelegramLongPollingBot {
 
-//    private static final String TOKEN = System.getenv("TOKEN");
-//    private static final String BOT_USERNAME = System.getenv("BOT_USERNAME");
-
-    @Value(value = "1521529983:AAGEQQKxUHM_GpH-ILo191SvoG9lINSCMBk")
-    private String TOKEN;
-    @Value(value = "just2knowbot")
-    private String BOT_USERNAME;
-
+    private static final String TOKEN = System.getenv("TOKEN");
+    private static final String BOT_USERNAME = System.getenv("BOT_USERNAME");
+    
     @Autowired
     private UserService userService;
 
