@@ -30,13 +30,13 @@ public class AfterMatchHandler implements Handler {
 
         switch (message.getText()) {
             case ("1"):
-                user.setStates("search");
+                user.setUserStates("search");
                 userService.save(user);
                 searchHandler.handle(message, user, chatId);
                 break;
             case ("2"):
                 user.setProfileEditStates("0");
-                user.setStates("profile");
+                user.setUserStates("profile");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);
                 break;
@@ -48,7 +48,7 @@ public class AfterMatchHandler implements Handler {
                                 "\n" +
                                 "1. Да, отключить анкету.\n" +
                                 "2. Нет, вернуться назад."));
-                user.setStates("active");
+                user.setUserStates("active");
                 userService.save(user);
                 break;
             default:

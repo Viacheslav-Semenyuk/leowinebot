@@ -58,7 +58,7 @@ public class ProfileHandler implements Handler {
                 userService.save(user);
             } else {
                 user.setActive(false);
-                user.setStates("profileEdit");
+                user.setUserStates("profileEdit");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileEditHandler.handle(message, user, chatId);
@@ -66,24 +66,24 @@ public class ProfileHandler implements Handler {
         } else if (user.getProfileEditStates().equals("1")) {
             if (message.getText().equals("1")) {
                 user.setActive(false);
-                user.setStates("profileEdit");
+                user.setUserStates("profileEdit");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileEditHandler.handle(message, user, chatId);
             } else if (message.getText().equals("2")) {
                 user.setActive(false);
-                user.setStates("profilePhotoEdit");
+                user.setUserStates("profilePhotoEdit");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profilePhotoEditHandler.handle(message, user, chatId);
             } else if (message.getText().equals("3")) {
                 user.setActive(false);
-                user.setStates("profileAboutEdit");
+                user.setUserStates("profileAboutEdit");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileAboutEditHandler.handle(message, user, chatId);
             } else if (message.getText().equals("4")) {
-                user.setStates("search");
+                user.setUserStates("search");
                 user.setSearchStates("0");
                 user.setProfileEditStates("0");
                 userService.save(user);

@@ -30,7 +30,7 @@ public class CommandHandler {
                     .setChatId(chatId)
                     .setText("Мы тебя помним!"));
 
-            user.setStates("profile");
+            user.setUserStates("profile");
             user.setSearchStates("0");
             user.setCountForCity(0);
             user.setMatchStates("0");
@@ -40,7 +40,7 @@ public class CommandHandler {
         }
 
         handlers.stream()
-                .filter(handler -> handler.test(user.getStates()))
+                .filter(handler -> handler.test(user.getUserStates()))
                 .findFirst()
                 .get().handle(message, user, chatId);
 

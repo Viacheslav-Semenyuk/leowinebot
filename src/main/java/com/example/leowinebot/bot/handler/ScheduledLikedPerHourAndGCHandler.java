@@ -20,7 +20,7 @@ public class ScheduledLikedPerHourAndGCHandler {
     @Scheduled(fixedRate = 3600000)
     public void changeCountCurrentTime() {
 
-        userService.saveAllLikedPerHour();
+        userService.saveAllLikedPerHourToZero();
         System.gc();
 
         log.info("Save liked per hour to zero and garbage collector executed {}", dateFormat.format(new Date()));

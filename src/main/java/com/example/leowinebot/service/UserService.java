@@ -10,7 +10,7 @@ public interface UserService {
 
     void save(User user);
 
-    void saveAllLikedPerHour();
+    void saveAllLikedPerHourToZero();
 
     void deleteByChatId(String chatId);
 

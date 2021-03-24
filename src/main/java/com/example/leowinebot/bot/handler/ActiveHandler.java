@@ -29,7 +29,7 @@ public class ActiveHandler implements Handler {
             bot.executeMessage(new SendMessage()
                     .setChatId(chatId)
                     .setText("Мы тебя помним!"));
-            user.setStates("profile");
+            user.setUserStates("profile");
             userService.save(user);
             profileHandler.handle(message, user, chatId);
         } else if (user.getActive().equals(false)) {
@@ -56,7 +56,7 @@ public class ActiveHandler implements Handler {
                         .setText("1. Смотреть анкеты.\n" +
                                 "2. Моя анкета.\n" +
                                 "3. Я больше не хочу никого искать."));
-                user.setStates("afterMatch");
+                user.setUserStates("afterMatch");
                 userService.save(user);
             } else {
                 bot.executeMessage(new SendMessage()

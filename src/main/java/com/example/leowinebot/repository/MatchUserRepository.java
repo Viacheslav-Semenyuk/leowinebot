@@ -1,6 +1,6 @@
 package com.example.leowinebot.repository;
 
-import com.example.leowinebot.entity.MatchUser;
+import com.example.leowinebot.entity.Match;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface MatchUserRepository extends JpaRepository<MatchUser, Long> {
+public interface MatchUserRepository extends JpaRepository<Match, Long> {
 
-    List<MatchUser> findAllByChatId(String chatId);
+    List<Match> findAllByChatId(String chatId);
 
-    Optional<MatchUser> findFirstByLikeChatId(String chatId);
+    Optional<Match> findFirstByLikeChatId(String chatId);
 
     Boolean existsByLikeChatId(String chatId);
 

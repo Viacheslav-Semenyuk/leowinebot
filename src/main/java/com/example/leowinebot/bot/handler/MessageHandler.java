@@ -1,7 +1,7 @@
 package com.example.leowinebot.bot.handler;
 
 import com.example.leowinebot.bot.Bot;
-import com.example.leowinebot.entity.MatchUser;
+import com.example.leowinebot.entity.Match;
 import com.example.leowinebot.entity.User;
 import com.example.leowinebot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +38,11 @@ public class MessageHandler implements Handler {
         } else if (user.getMessageStates().equals("1")) {
 
             User foundUser = userService.findByChatId(user.getFoundChatIdUser());
-            MatchUser matchUser = new MatchUser();
-            matchUser.setChatId(foundUser.getChatId());
-            matchUser.setLikeChatId(chatId);
-            matchUser.setMessage(message.getText());
-            searchHandler.likeUser(user, matchUser, foundUser, chatId, message);
+            Match match = new Match();
+            match.setChatId(foundUser.getChatId());
+            match.setLikeChatId(chatId);
+            match.setMessage(message.getText());
+            searchHandler.clickedHeart(user, match, foundUser, chatId, message);
 
 
         }

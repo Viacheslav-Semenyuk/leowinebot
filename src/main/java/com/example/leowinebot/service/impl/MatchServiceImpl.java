@@ -1,13 +1,13 @@
 package com.example.leowinebot.service.impl;
 
-import com.example.leowinebot.entity.MatchUser;
+import com.example.leowinebot.entity.Match;
 import com.example.leowinebot.repository.MatchUserRepository;
-import com.example.leowinebot.service.MatchUserService;
+import com.example.leowinebot.service.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MatchUserServiceImpl implements MatchUserService {
+public class MatchServiceImpl implements MatchService {
 
     @Autowired
     private MatchUserRepository matchUserRepository;
@@ -20,7 +20,7 @@ public class MatchUserServiceImpl implements MatchUserService {
     }
 
     @Override
-    public MatchUser findByLikeChatId(String chatId) {
+    public Match findByLikeChatId(String chatId) {
         return matchUserRepository.findFirstByLikeChatId(chatId).orElse(null);
     }
 
@@ -31,8 +31,8 @@ public class MatchUserServiceImpl implements MatchUserService {
     }
 
     @Override
-    public void save(MatchUser matchUser) {
-        matchUserRepository.save(matchUser);
+    public void save(Match match) {
+        matchUserRepository.save(match);
     }
 
     @Override

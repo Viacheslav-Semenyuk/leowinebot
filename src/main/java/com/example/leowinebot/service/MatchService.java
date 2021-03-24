@@ -1,16 +1,16 @@
 package com.example.leowinebot.service;
 
-import com.example.leowinebot.entity.MatchUser;
+import com.example.leowinebot.entity.Match;
 
-public interface MatchUserService {
+public interface MatchService {
 
     Boolean existsByChatIdAndLikeChatId(String chatId, String likeChatId);
 
-    MatchUser findByLikeChatId(String chatId);
+    Match findByLikeChatId(String chatId);
 
     void deleteByChatIdAndLikeChatId(String chatId, String likeChatId);
 
-    void save(MatchUser matchUser);
+    void save(Match match);
 
     Boolean existsByLikeChatId(String chatId);
 

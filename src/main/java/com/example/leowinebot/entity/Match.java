@@ -9,8 +9,8 @@ import javax.persistence.*;
 @Entity
 @Setter
 @Getter
-@Table(name = "matchUsers")
-public class MatchUser {
+@Table(name = "match")
+public class Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

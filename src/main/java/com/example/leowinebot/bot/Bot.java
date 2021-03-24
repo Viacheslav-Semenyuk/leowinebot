@@ -3,7 +3,7 @@ package com.example.leowinebot.bot;
 import com.example.leowinebot.bot.handler.CommandHandler;
 import com.example.leowinebot.bot.handler.KeyboardHandler;
 import com.example.leowinebot.entity.User;
-import com.example.leowinebot.service.MatchUserService;
+import com.example.leowinebot.service.MatchService;
 import com.example.leowinebot.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class Bot extends TelegramLongPollingBot {
     private UserService userService;
 
     @Autowired
-    private MatchUserService matchUserService;
+    private MatchService matchService;
 
     @Autowired
     private CommandHandler commandHandler;
@@ -48,7 +48,7 @@ public class Bot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = Long.toString(message.getChatId());
             User user = userService.findByChatId(chatId);
-            log.info("Chat ID: " + chatId + " username: " + message.getFrom().getUserName() + " Text: " + message.getText());
+            log.info("Chat ID: " + chatId + " Username: " + message.getFrom().getUserName() + " Text: " + message.getText());
 
             if (user != null && message.hasText()
                     && !message.hasPhoto() && !user.getBanned()) {
@@ -81,7 +81,7 @@ public class Bot extends TelegramLongPollingBot {
                 createUser.setLikedPerHour(0);
                 createUser.setActive(false);
                 createUser.setBanned(false);
-                createUser.setStates("start");
+                createUser.setUserStates("start");
                 userService.save(createUser);
             } else {
                 executeMessage(new SendMessage()
@@ -108,7 +108,7 @@ public class Bot extends TelegramLongPollingBot {
             log.debug("Executed {}", sendMessage);
         } catch (TelegramApiException e) {
             userService.deleteByChatId(sendMessage.getChatId());
-            matchUserService.deleteAllByChatId(sendMessage.getChatId());
+            matchService.deleteAllByChatId(sendMessage.getChatId());
             log.error("Exception while sending message {} to user: {}", sendMessage, sendMessage.getChatId());
         }
     }

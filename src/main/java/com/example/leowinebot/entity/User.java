@@ -3,6 +3,7 @@ package com.example.leowinebot.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 import javax.persistence.*;
@@ -52,7 +53,7 @@ public class User {
     private String about;
 
     @Column
-    private String states;
+    private String userStates;
 
     @Column
     private String profileEditStates;
@@ -80,4 +81,11 @@ public class User {
 
     @Column
     private Boolean banned;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

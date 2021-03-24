@@ -1,9 +1,9 @@
 package com.example.leowinebot.bot.handler;
 
 import com.example.leowinebot.bot.Bot;
-import com.example.leowinebot.entity.MatchUser;
+import com.example.leowinebot.entity.Match;
 import com.example.leowinebot.entity.User;
-import com.example.leowinebot.service.MatchUserService;
+import com.example.leowinebot.service.MatchService;
 import com.example.leowinebot.service.UserService;
 import com.vdurmont.emoji.EmojiManager;
 import lombok.extern.slf4j.Slf4j;
@@ -24,27 +24,27 @@ public class MatchHandler implements Handler {
     private UserService userService;
 
     @Autowired
-    private MatchUserService matchUserService;
+    private MatchService matchService;
 
     @Autowired
     private KeyboardHandler keyboardHandler;
 
     public void handle(Message message, User user, String chatId) {
 
-        if (matchUserService.existsByLikeChatId(chatId)) {
-            MatchUser matchUser = matchUserService.findByLikeChatId(chatId);
-            User foundUser = userService.findByChatId(matchUser.getChatId());
+        if (matchService.existsByLikeChatId(chatId)) {
+            Match match = matchService.findByLikeChatId(chatId);
+            User foundUser = userService.findByChatId(match.getChatId());
             if (foundUser == null) {
-                matchUserService.deleteAllByChatId(matchUser.getChatId());
+                matchService.deleteAllByChatId(match.getChatId());
             }
             assert foundUser != null;
             if (user.getMatchStates().equals("0")) {
                 if (message.getText().equals("1")) {
 
-                    sendMessageLike(chatId, foundUser, matchUser);
+                    sendProfile(chatId, foundUser, match);
 
                     user.setActive(true);
-                    user.setStates("match");
+                    user.setUserStates("match");
                     user.setMatchStates("1");
                     userService.save(user);
 
@@ -56,7 +56,7 @@ public class MatchHandler implements Handler {
                                     "\n" +
                                     "1. Да, отключить анкету.\n" +
                                     "2. Нет, вернуться назад."));
-                    user.setStates("active");
+                    user.setUserStates("active");
                     userService.save(user);
 
                 } else {
@@ -91,7 +91,7 @@ public class MatchHandler implements Handler {
                                     "3. Я больше не хочу никого искать."));
 
                     deleteMatch(chatId, user, foundUser);
-                    foundUser.setStates("afterMatch");
+                    foundUser.setUserStates("afterMatch");
                     foundUser.setMatchStates("0");
                     foundUser.setSearchStates("0");
                     userService.save(foundUser);
@@ -121,7 +121,7 @@ public class MatchHandler implements Handler {
                     .setText("1. Смотреть анкеты.\n" +
                             "2. Моя анкета.\n" +
                             "3. Я больше не хочу никого искать."));
-            user.setStates("afterMatch");
+            user.setUserStates("afterMatch");
             user.setMatchStates("0");
             user.setSearchStates("0");
             userService.save(user);
@@ -129,12 +129,12 @@ public class MatchHandler implements Handler {
     }
 
     private void deleteMatch(String chatId, User user, User foundUser) {
-        matchUserService.deleteByChatIdAndLikeChatId(foundUser.getChatId(), chatId);
-        if (matchUserService.countByLikeChatId(chatId) != 0) {
-            MatchUser newMatchUser = matchUserService.findByLikeChatId(chatId);
-            User newFoundUser = userService.findByChatId(newMatchUser.getChatId());
-            sendMessageLike(chatId, newFoundUser, newMatchUser);
-            user.setStates("match");
+        matchService.deleteByChatIdAndLikeChatId(foundUser.getChatId(), chatId);
+        if (matchService.countByLikeChatId(chatId) != 0) {
+            Match newMatch = matchService.findByLikeChatId(chatId);
+            User newFoundUser = userService.findByChatId(newMatch.getChatId());
+            sendProfile(chatId, newFoundUser, newMatch);
+            user.setUserStates("match");
             user.setMatchStates("1");
             user.setSearchStates("0");
             userService.save(user);
@@ -145,14 +145,14 @@ public class MatchHandler implements Handler {
                     .setText("1. Смотреть анкеты.\n" +
                             "2. Моя анкета.\n" +
                             "3. Я больше не хочу никого искать."));
-            user.setStates("afterMatch");
+            user.setUserStates("afterMatch");
             user.setMatchStates("0");
             user.setSearchStates("0");
             userService.save(user);
         }
     }
 
-    private void sendMessageLike(String chatId, User foundUser, MatchUser msgUser) {
+    private void sendProfile(String chatId, User foundUser, Match msgUser) {
         if (msgUser.getMessage() != null) {
             bot.executePhoto(new SendPhoto().setChatId(chatId)
                     .setReplyMarkup(keyboardHandler.handle(keyboardHandler.matchKeyboard()))

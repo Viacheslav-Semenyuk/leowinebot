@@ -38,14 +38,14 @@ public class ProfilePhotoEditHandler implements Handler {
             if (message.hasPhoto() && !message.hasText() && !message.hasAudio()) {
                 user.setActive(true);
                 user.setPhoto(message.getPhoto().get(0).getFileId());
-                user.setStates("profile");
+                user.setUserStates("profile");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);
             } else if (message.getText().equals("Оставить текущее")) {
                 user.setActive(true);
                 user.setPhoto(user.getPhoto());
-                user.setStates("profile");
+                user.setUserStates("profile");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);

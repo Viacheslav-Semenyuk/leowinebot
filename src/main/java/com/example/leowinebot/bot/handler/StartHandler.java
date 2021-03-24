@@ -4,9 +4,11 @@ import com.example.leowinebot.bot.Bot;
 import com.example.leowinebot.entity.User;
 import com.example.leowinebot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+@Component
 public class StartHandler implements Handler {
 
     @Autowired
@@ -24,7 +26,7 @@ public class StartHandler implements Handler {
     @Override
     public void handle(Message message, User user, String chatId) {
         if (message.getText().startsWith("Да") && !message.hasPhoto()) {
-            user.setStates("profileEdit");
+            user.setUserStates("profileEdit");
             user.setProfileEditStates("0");
             userService.save(user);
             profileEditHandler.handle(message, user, chatId);

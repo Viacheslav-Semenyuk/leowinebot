@@ -42,7 +42,7 @@ public class ProfileAboutEditHandler implements Handler {
                 user.setAbout("– " + message.getText());
             }
             user.setActive(true);
-            user.setStates("profile");
+            user.setUserStates("profile");
             user.setProfileEditStates("0");
             userService.save(user);
             profileHandler.handle(message, user, chatId);

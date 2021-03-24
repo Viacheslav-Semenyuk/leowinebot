@@ -187,14 +187,14 @@ public class ProfileEditHandler implements Handler {
             if (message.hasPhoto() && !message.hasText() && !message.hasAudio()) {
                 user.setPhoto(message.getPhoto().get(0).getFileId());
                 user.setActive(true);
-                user.setStates("profile");
+                user.setUserStates("profile");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);
             } else if (message.getText().equals("Оставить текущее")) {
                 user.setPhoto(user.getPhoto());
                 user.setActive(true);
-                user.setStates("profile");
+                user.setUserStates("profile");
                 user.setProfileEditStates("0");
                 userService.save(user);
                 profileHandler.handle(message, user, chatId);
@@ -235,6 +235,7 @@ public class ProfileEditHandler implements Handler {
         } else {
             bot.executeMessage(new SendMessage()
                     .setChatId(user.getChatId())
+                    .setReplyMarkup(new ReplyKeyboardRemove())
                     .setText("Теперь пришли свое фото, \n" +
                             "его будут видеть другие пользователи"));
         }

@@ -12,6 +12,7 @@ public class HandlerConfig {
     @Bean
     public List<Handler> handlers() {
         List<Handler> handlers = new ArrayList<>();
+        handlers.add(new StartHandler());
         handlers.add(new ActiveHandler());
         handlers.add(new AfterMatchHandler());
         handlers.add(new MatchHandler());
@@ -21,7 +22,6 @@ public class HandlerConfig {
         handlers.add(new ProfileHandler());
         handlers.add(new ProfilePhotoEditHandler());
         handlers.add(new SearchHandler());
-        handlers.add(new StartHandler());
         return handlers;
     }
 }
