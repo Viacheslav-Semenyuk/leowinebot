@@ -66,8 +66,8 @@ public class MatchHandler implements Handler {
                 }
             } else if (user.getMatchStates().equals("1")) {
 
-                if (EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("heart")
-                        && EmojiManager.getByUnicode(message.getText()) != null
+                if (EmojiManager.getByUnicode(message.getText()) != null
+                        && EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("heart")
                         || message.getText().equals("1")) {
                     bot.executeMessage(new SendMessage()
                             .setChatId(chatId)
@@ -96,8 +96,8 @@ public class MatchHandler implements Handler {
                     foundUser.setSearchStates("0");
                     userService.save(foundUser);
 
-                } else if (EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("-1")
-                        && EmojiManager.getByUnicode(message.getText()) != null
+                } else if (EmojiManager.getByUnicode(message.getText()) != null
+                        && EmojiManager.getByUnicode(message.getText()).getAliases().get(0).equals("-1")
                         || message.getText().equals("2")) {
 
                     deleteMatch(chatId, user, foundUser);
