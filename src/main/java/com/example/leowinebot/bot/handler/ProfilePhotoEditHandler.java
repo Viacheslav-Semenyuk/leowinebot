@@ -32,6 +32,7 @@ public class ProfilePhotoEditHandler implements Handler {
                             .editKeyboard("Оставить текущее")))
                     .setText("Теперь пришли свое фото, \n" +
                             " его будут видеть другие пользователи"));
+            user.setActive(false);
             user.setProfileEditStates("7");
             userService.save(user);
         } else if (user.getProfileEditStates().equals("7")) {
