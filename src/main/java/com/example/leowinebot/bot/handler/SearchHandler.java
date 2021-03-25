@@ -42,7 +42,7 @@ public class SearchHandler implements Handler {
 
             User userSearch = userService.findRandomUserByCriterion(user);
 
-            if (userSearch != null && user.getLikedPerHour() <= 50) {
+            if (userSearch != null && user.getLikedPerHour() <= 35) {
                 bot.executePhoto(new SendPhoto().setChatId(chatId)
                         .setReplyMarkup(keyboardHandler.handle(keyboardHandler.searchKeyboard()))
                         .setCaption(userSearch.getName() + ", " + userSearch.getAge() + ", "
@@ -52,7 +52,7 @@ public class SearchHandler implements Handler {
                 user.setSearchStates("1");
                 user.setUserStates("search");
                 userService.save(user);
-            } else if (user.getLikedPerHour() > 50) {
+            } else if (user.getLikedPerHour() > 35) {
                 bot.executeMessage(new SendMessage().setChatId(chatId)
                         .setText("Слишком много лайков за последнее время – " +
                                 "ставь Мне нравится только тем, кто тебе действительно" +
