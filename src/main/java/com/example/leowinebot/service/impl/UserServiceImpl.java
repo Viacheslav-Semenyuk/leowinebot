@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
                     citiesList, user.getSearchGender(),
                     true, user.getAge() - FROM_AGE, user.getAge() + TO_AGE);
             if (checkListUsersIsEmpty(user, usersList)) {
-                return usersList.get(user.getCountForCity());
+               return reverseOrNot(user, usersList);
             }
         } else {
             List<User> usersList = userRepository
@@ -125,16 +125,25 @@ public class UserServiceImpl implements UserService {
                             citiesList, user.getSearchGender(),
                             true, user.getAge() - FROM_AGE, user.getAge() + TO_AGE);
             if (checkListUsersIsEmpty(user, usersList)) {
-                return usersList.get(user.getCountForCity());
+               return reverseOrNot(user, usersList);
             }
         }
 
         return null;
     }
 
-    private boolean checkListUsersIsEmpty(User user, List<User> listUsers) {
-        if (!listUsers.isEmpty()) {
-            if (user.getCountForCity() < listUsers.size()) {
+    private User reverseOrNot(User user, List<User> usersList){
+        if(((int) (Math.random() * 2)) == 1){
+            Collections.reverse(usersList);
+            return usersList.get(user.getCountForCity());
+        }else {
+            return usersList.get(user.getCountForCity());
+        }
+    }
+
+    private boolean checkListUsersIsEmpty(User user, List<User> usersList) {
+        if (!usersList.isEmpty()) {
+            if (user.getCountForCity() < usersList.size()) {
                 return true;
             } else {
                 user.setCountForCity(0);
